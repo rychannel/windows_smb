@@ -8,8 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
- - Move code from init class in to examples/usage.pp. Init class seems like its using example code.
- - Configure windows_smb::manage_smb_server_config and windows_smb::manage_clien_config to classes from types
+ - Configure windows_smb::manage_smb_server_config and windows_smb::manage_client_config to classes from types
+
+## [1.0.1] - 2024-4-02
+
+### Changed
+ - Modified Author in CHANGELOG
+ - Modified Puppet minimum version requirement as I can't test on lower Puppet versions
+ - Updated module to be compatible with PDK 3.0.1
+
+Note: No functionality has been changed or fixed since the 1.0.0 version. No need to upgrade if on v1.0.0.
 
 ## [1.0.0] - 2024-4-02
 ### Addded

@@ -1,3 +1,6 @@
+# @summary class for setting up prerequisites for file services on a windows server.
+#
+#  This class is probaably not needed for Windows File Sharing
 class windows_smb::features::prerequisites {
   # TODO: fix this up for ensuring file share crap if user calls init.pp
 

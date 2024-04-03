@@ -49,19 +49,6 @@ define windows_smb::manage_smb_share (
 ) {
   # TODO: take only UPNs due to potential for ambiguity on netbios\username in multi-domain environments
 
-  # fail if no folder target for share or passed data in param is not a string
-  if ($smb_share_directory == undef) {
-    fail('smb_share_directory specified as undef')
-  } else {
-    validate_string($smb_share_directory)
-  }
-
-  if ($smb_share_comments == undef) {
-    fail('explicit pass of undef as param smb_share_comments')
-  } else {
-    validate_string($smb_share_comments)
-  }
-
   # if have assigned no permissions whatsoever then fail
   if (empty($smb_share_access_full) and empty($smb_share_access_change) and empty($smb_share_access_read) and empty(
   $smb_share_access_deny)) {

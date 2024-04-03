@@ -1,12 +1,12 @@
 {
-  "name": "karmafeast-windows_smb",
-  "version": "0.4.4",
+  "name": "rychannel-windows_smb",
+  "version": "1.0.0",
   "author": "karmafeast",
   "summary": "Module that will manage windows SMB shares, server and client SMB configuration",
   "license": "Apache-2.0",
-  "source": "https://github.com/karmafeast/windows_smb",
-  "project_page": "https://github.com/karmafeast/windows_smb",
-  "issues_url": "https://github.com/karmafeast/windows_smb/issues",
+  "source": "https://github.com/rychannel/windows_smb",
+  "project_page": "https://github.com/rychannel/windows_smb",
+  "issues_url": "https://github.com/rychannel/windows_smb/issues",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",

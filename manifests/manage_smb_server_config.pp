@@ -1,40 +1,40 @@
+# @summary Manage SMB Server Configuration on Windows
+#
+#
+# TODO: Add documentation for type parameters
+# @param ensure
+# @param smb_server_asynchronous_credits
+# @param smb_server_smb2_credits_min 
+# @param smb_server_smb2_credits_max
+# @param smb_server_max_threads_per_queue
+# @param smb_server_treat_host_as_stable_storage
+# @param smb_server_max_channel_per_session  
+# @param smb_server_max_session_per_connection  
+# @param smb_server_additional_critical_worker_threads
+# @param smb_server_additional_delayed_worker_threads
+# @param smb_server_ntfs_8dot3_name_creation 
+# @param smb_server_ntfs_disable_last_access_update 
 define windows_smb::manage_smb_server_config (
-  $ensure                                        = 'present',
-  $smb_server_asynchronous_credits               = 512,
-  $smb_server_smb2_credits_min                   = 512,
-  $smb_server_smb2_credits_max                   = 8192,
-  $smb_server_max_threads_per_queue              = 20,
-  $smb_server_treat_host_as_stable_storage       = false,
-  $smb_server_max_channel_per_session            = 32,
-  $smb_server_max_session_per_connection         = 16384,
-  $smb_server_additional_critical_worker_threads = 0,
-  $smb_server_additional_delayed_worker_threads  = 0,
-  $smb_server_ntfs_8dot3_name_creation           = undef,
-  $smb_server_ntfs_disable_last_access_update    = undef
+  Enum['present','default']                                      $ensure                                        = 'present',
+  Integer                                                        $smb_server_asynchronous_credits               = 512,
+  Integer                                                        $smb_server_smb2_credits_min                   = 512,
+  Integer                                                        $smb_server_smb2_credits_max                   = 8192,
+  Integer                                                        $smb_server_max_threads_per_queue              = 20,
+  Boolean                                                        $smb_server_treat_host_as_stable_storage       = false,
+  Integer                                                        $smb_server_max_channel_per_session            = 32,
+  Integer                                                        $smb_server_max_session_per_connection         = 16384,
+  Integer                                                        $smb_server_additional_critical_worker_threads = 0,
+  Integer                                                        $smb_server_additional_delayed_worker_threads  = 0,
+  Optional[Enum['0','1','2','enabled','disabled','per_volume']]  $smb_server_ntfs_8dot3_name_creation           = undef,
+  Optional[Boolean]                                              $smb_server_ntfs_disable_last_access_update    = undef
 ) {
-  if (!$::osfamily == 'windows') {
+  if (!facts['os']['family'] == 'windows') {
     fail('cannot run windows_smb::manage_smb_server_config against non-windows OS platform')
   }
-
-  validate_re($ensure, '^(present|default)$', 'ensure must be one of \'present\', \'default\'')
-
-  validate_integer($smb_server_asynchronous_credits, 4294967295, 1)
-  validate_integer($smb_server_smb2_credits_min, 4294967295, 1)
-  validate_integer($smb_server_smb2_credits_max, 4294967295, $smb_server_smb2_credits_min)
-  validate_integer($smb_server_smb2_credits_min, $smb_server_smb2_credits_max, 1)
-  validate_integer($smb_server_max_threads_per_queue, 4294967295, 1)
-  validate_integer($smb_server_max_channel_per_session, 4294967295, 1)
-  validate_integer($smb_server_max_session_per_connection, 4294967295, 1)
-  validate_bool($smb_server_treat_host_as_stable_storage)
-
-  validate_integer($smb_server_additional_critical_worker_threads, 4294967295, 0)
-  validate_integer($smb_server_additional_delayed_worker_threads, 4294967295, 0)
 
   if ($smb_server_ntfs_8dot3_name_creation == undef) {
     $process_ntfs_8dot3 = false
   } else {
-    validate_re($smb_server_ntfs_8dot3_name_creation, '^(0|1|2|enabled|disabled|per_volume)$', 'ensure must be one of \'0\', \'1\', \'2\', \'enabled\', \'disabled\', \'per_volume\''
-    )
     $process_ntfs_8dot3 = true
 
     case $smb_server_ntfs_8dot3_name_creation {
@@ -56,7 +56,6 @@ define windows_smb::manage_smb_server_config (
   if ($smb_server_ntfs_disable_last_access_update == undef) {
     $process_ntfs_disable_last_access_update = false
   } else {
-    validate_bool($smb_server_ntfs_disable_last_access_update)
     $process_ntfs_disable_last_access_update = true
 
     if ($smb_server_ntfs_disable_last_access_update) {
@@ -133,9 +132,7 @@ define windows_smb::manage_smb_server_config (
         type   => dword,
         data   => $ntfs_disable_last_access_update_int,
       }
-
     }
-
   } else {
     $reg_values = {
       'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\AsynchronousCredits'              => {
@@ -185,7 +182,5 @@ define windows_smb::manage_smb_server_config (
     }
 
     create_resources(registry_value, $reg_values, $smb_server_settings_create_resource_defaults)
-
   }
-
 }

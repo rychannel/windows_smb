@@ -1,86 +1,88 @@
-#2019-09-13 - Release 0.4.3
+# Changelog
 
-incorporate PR from skyrawrcode - vars were not properly initialized in share mgmt class, would cause issue when not populated via params.
+All notable changes to this project will be documented in this file.
 
-#2017-05-03 - Release 0.4.2
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-needing this one again... fixed some bad client settings stuff for oplocks which doesnt seem to exist in 2016 at the very least... 
+## [Unreleased]
 
-#2016-04-26 - Release 0.4.1
+### Changed
+ - Move code from init class in to examples/usage.pp. Init class seems like its using example code.
+ - Configure windows_smb::manage_smb_server_config and windows_smb::manage_clien_config to classes from types
 
-##NOTE NEW DEPENDENCY ON `puppetlabs_registry` as of 0.4.0 - see metadata.json
+## [1.0.0] - 2024-4-02
+### Addded
+ - Data types to Class Parameters
+ - Docuemntation for Class Parameters
+### Changed
+ - Start using Semantic Versioning
+ - Updated CHANGELOG format
+ - Forked project from [karmabeast/windows_smb](https://forge.puppet.com/modules/karmafeast/windows_smb)
+ - Moved current init class to examples/example.pp becuase it doesn't seem to be code that should be used in production.
+### Removed
+ - Remove references to deprecated validate functions
 
-###Features
- -  N/A
+## [0.4.4] - 2023-9-13
 
-###Bugfixes
+### Changed
+ - Converted Module to use PDK 1.13
+
+## [0.4.3] - 2019-09-13
+
+### Fixed
+ - incorporate PR from skyrawrcode - vars were not properly initialized in share mgmt class, would cause issue when not populated via params.
+
+## [0.4.2] - 2017-05-03
+
+### Fixed
+ - needing this one again... fixed some bad client settings stuff for oplocks which doesnt seem to exist in 2016 at the very least... 
+
+## [0.4.1] - 2016-04-26
+### Changed
+ - NOTE NEW DEPENDENCY ON `puppetlabs_registry` as of 0.4.0 - see metadata.json
+
+### FIXED
  -  incorrect code block placement for registry defaults in `windows_smb::manage_client_config` - would cause ensure => default resource create to fail, fixed.
  -  doc typos fix
 
-###Improvements
- - N/A
+## [0.4.0] - 2016-04-26
+### Changed
+- NOTE NEW DEPENDENCY ON `puppetlabs_registry` - see metadata.json
+- complete rework of resources to manage `windows_smb::manage_client_config` and `windows_smb::manage_server_config` - now like 10x faster to apply due to direct reg mod and its providers direct interface with win APIs
+- significant optimization of `windows_smb::manage_client_config` and `windows_smb::manage_server_config`
 
-#2016-04-26 - Release 0.4.0
+## [0.3.0] - 2016-04-13
 
-##NOTE NEW DEPENDENCY ON `puppetlabs_registry` - see metadata.json
-
-###Features
- - complete rework of resources to manage `windows_smb::manage_client_config` and `windows_smb::manage_server_config` - now like 10x faster to apply due to direct reg mod and its providers direct interface with win APIs
-
-###Bugfixes
- -  N/A
-
-###Improvements
- - significant optimization of `windows_smb::manage_client_config` and `windows_smb::manage_server_config`
-
-#2016-04-13 - Release 0.3.0
-
-###Features
+### Added
  - added documentation for `windows_smb::manage_smb_client_config`.
  - __improvements! many things for `managing smb client settings` on windows added - have fun!__
-
-###Bugfixes
- -  N/A
-
-###Improvements
  - many things for `managing smb client settings` on windows added
 
-#2016-04-13 - Release 0.2.0
+## [0.2.0] - 2016-04-13
 
-###Features
+### Added
  - added documentation for `windows_smb::manage_smb_server_config`.
  - bug fixes
  - __improvements!__
+ - added support for MaxSessionPerConnection control in `windows_smb::manage_smb_server_config`
 
-###Bugfixes
+### Fixed
  - fixed validator of Uint32 for various params in `windows_smb::manage_smb_share` - was allowing out of range value.
 
-###Improvements
- - added support for MaxSessionPerConnection control in `windows_smb::manage_smb_server_config`
+### Changed
+
  - found defaults for `smb_server_max_channel_per_session` - removed defaulting to `undef` for this param in `windows_smb::manage_smb_server_config`
 
 
-#2016-04-13 - Release 0.1.3
+## [0.1.3] - 2016-04-13
 
-###Features
+### Added
  - added smb server settings class and example in init, documentation to come.  `windows_smb::manage_smb_server_config` safe to use.
 
-###Bugfixes
- - N/A
+## [0.1.0] - 2016-04
 
-###Improvements
- - N/A
+## Initial release - NOTE SUPPORT FOR SMB CLIENT AND SERVER SETTINGS NOT YET IMPLEMENTED - `windows_smb::manage_smb_share` ok to use
 
-#2016-04 - Release 0.1.0
-
-##Initial release - NOTE SUPPORT FOR SMB CLIENT AND SERVER SETTINGS NOT YET IMPLEMENTED - `windows_smb::manage_smb_share` ok to use
-
-###Features
+## Added
  - added support for managing smb shares on windows systems
-
-###Bugfixes
- - N/A
-
-###Improvements
- - N/A
-

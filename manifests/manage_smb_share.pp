@@ -1,33 +1,52 @@
+# @summary Use this type to create an SMB share
+#
 # windows smb share management
 # CAFS not supported in this implementation
 # permission changes will delete and recreate the share - control your implementation
+#
+# @example
+#          windows_smb::manage_smb_share { 'testshare1':
+#            smb_share_directory               => 'c:\temp1',
+#            smb_share_access_full             => ['Everyone'],
+#            require                           => File['c:\temp1'],
+#          }
+#
+# @param ensure                            - Whether the share exists or not (default: true)
+# @param smb_share_name                    - Name of the share (default: $title)
+# @param smb_share_directory               - Directory being shared
+# @param smb_share_comments                - Share Comments (default: 'puppet generated smb share')
+# @param smb_share_concurrent_user_limit   - Limit for number of concurrent users. 0 = unlimited (default: 0)
+# @param smb_share_cache                   - Share cache options:
+#                                            - None  -- Default
+#                                            - Manual
+#                                            - Programs
+#                                            - Docuemnts
+#                                            - BranchCache
+# @param smb_share_encrypt_data            - Enables Share encryption (default: false)
+# @param smb_share_folder_enum_mode        - Conifigure share enumeration mode (default: AccessBased)
+# @param smb_share_temporary               - Set bool to indicate whether share will persist past system reboot (default: false)
+# @param smb_share_access_full             - Array of Users/Groups with Full Control access to share
+# @param smb_share_access_change           - Array of Users/Groups with Change access
+# @param smb_share_access_read             - Array of Users/Groups with Read Only access
+# @param smb_share_access_deny             - Array of Users/Groups denied access
+# @param smb_share_autoinstall_branchcache - Set boolean true to attempt to auto-install windows feature 'FS-BranchCache' if available 
+#                                            to system via PowerShell 'Add-WindowsFeature'.
 define windows_smb::manage_smb_share (
-  $ensure                            = 'present',
-  $smb_share_name                    = $title,
-  $smb_share_directory               = undef,
-  $smb_share_comments                = 'puppet generated smb share',
-  $smb_share_concurrent_user_limit   = 0,
-  $smb_share_cache                   = 'None',
-  $smb_share_encrypt_data            = false,
-  $smb_share_folder_enum_mode        = 'AccessBased',
-  $smb_share_temporary               = false,
-  $smb_share_access_full             = [],
-  $smb_share_access_change           = [],
-  $smb_share_access_read             = [],
-  $smb_share_access_deny             = [],
-  $smb_share_autoinstall_branchcache = false) {
-  validate_re($ensure, '^(present|absent|purge)$', 'ensure must be one of \'present\', \'absent\', \'purge\'')
-  validate_integer($smb_share_concurrent_user_limit, 4294967295, 0)
-  validate_bool($smb_share_encrypt_data)
-  validate_bool($smb_share_temporary)
-  validate_bool($smb_share_autoinstall_branchcache)
-  validate_re($smb_share_cache, '^(None|Manual|Programs|Documents|BrancheCache)$', 'smb_share_cache must be one of \'None\', \'Manual\', \'Programs\', \'Documents\', \'BrancheCache\'')
-  validate_re($smb_share_folder_enum_mode, '^(AccessBased|Unrestricted)$', 'smb_share_folder_enum_mode must be one of \'AccessBased\', \'Unrestricted\'')
-  validate_array($smb_share_access_full)
-  validate_array($smb_share_access_change)
-  validate_array($smb_share_access_read)
-  validate_array($smb_share_access_deny)
-
+  Enum['present','absent','purge']                             $ensure                            = 'present',
+  String                                                       $smb_share_name                    = $title,
+  String                                                       $smb_share_directory               = undef,
+  String                                                       $smb_share_comments                = 'puppet generated smb share',
+  Integer                                                      $smb_share_concurrent_user_limit   = 0,
+  Enum['None','Manual','Programs','Documents','BrancheCache']  $smb_share_cache                   = 'None',
+  Boolean                                                      $smb_share_encrypt_data            = false,
+  Enum['AccessBased','Unrestricted']                           $smb_share_folder_enum_mode        = 'AccessBased',
+  Boolean                                                      $smb_share_temporary               = false,
+  Array[String]                                                $smb_share_access_full             = [],
+  Array[String]                                                $smb_share_access_change           = [],
+  Array[String]                                                $smb_share_access_read             = [],
+  Array[String]                                                $smb_share_access_deny             = [],
+  Boolean                                                      $smb_share_autoinstall_branchcache = false
+) {
   # TODO: take only UPNs due to potential for ambiguity on netbios\username in multi-domain environments
 
   # fail if no folder target for share or passed data in param is not a string
@@ -53,7 +72,7 @@ define windows_smb::manage_smb_share (
   if (empty($smb_share_access_full)) {
     $access_full_join          = ''
     $access_full_create_string = ''
-      $fixed_full_access_str = ''
+    $fixed_full_access_str = ''
   } else {
     if (!empty($smb_share_access_change)) {
       $smb_share_access_full.each |String $item| {
@@ -123,7 +142,7 @@ define windows_smb::manage_smb_share (
   if (empty($smb_share_access_read)) {
     $access_read_join          = ''
     $access_read_create_string = ''
-     $fixed_read_access_str  = ''
+    $fixed_read_access_str  = ''
   } else {
     if (!empty($smb_share_access_full)) {
       $smb_share_access_read.each |String $item| {
@@ -191,7 +210,7 @@ define windows_smb::manage_smb_share (
   }
 
   $create_string_permissions_suffix =
-  "${access_full_create_string}${access_change_create_string}${access_read_create_string}${access_deny_create_string}"
+    "${access_full_create_string}${access_change_create_string}${access_read_create_string}${access_deny_create_string}"
 
   if ($smb_share_temporary) {
     $create_string_temporary_suffix = ' -Temporary'
@@ -224,7 +243,6 @@ define windows_smb::manage_smb_share (
           require   => Exec["ensure present - test-path ${smb_share_directory}"],
           logoutput => true,
         }
-
       }
 
       exec { "Create-${smb_share_name}":
@@ -234,7 +252,6 @@ define windows_smb::manage_smb_share (
         logoutput => true,
         require   => Exec["check_BranchCache-${smb_share_name}"],
       }
-
     } else {
       exec { "Create-${smb_share_name}":
         command   => "New-SmbShare -Name \"${smb_share_name}\" -Path \"${smb_share_directory}\" -CachingMode ${smb_share_cache} -ConcurrentUserLimit ${smb_share_concurrent_user_limit} -Description \"${smb_share_comments}\" -EncryptData \$${smb_share_encrypt_data} -FolderEnumerationMode ${smb_share_folder_enum_mode}${create_string_temporary_suffix}${create_string_permissions_suffix};",
@@ -334,7 +351,6 @@ if(!(check_access -existing_access \$existing_access -check_array \$access_deny 
       require   => Exec["Create-${smb_share_name}"],
       logoutput => true,
     }
-
   } else {
     exec { "Delete-${smb_share_name}":
       command   => "remove-smbshare \"${smb_share_name}\" -confirm:\$false",
@@ -342,6 +358,5 @@ if(!(check_access -existing_access \$existing_access -check_array \$access_deny 
       unless    => "if((get-smbshare \"${smb_share_name}\") -ne \$null){exit 1;}else{exit 0;}",
       logoutput => true,
     }
-
   }
 }

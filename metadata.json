@@ -1,6 +1,6 @@
 {
   "name": "rychannel-windows_smb",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "RyChannel",
   "summary": "Module that will manage windows SMB shares, server and client SMB configuration",
   "license": "Apache-2.0",

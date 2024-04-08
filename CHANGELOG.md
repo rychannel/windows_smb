@@ -10,7 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - Configure windows_smb::manage_smb_server_config and windows_smb::manage_client_config to classes from types
 
-## [1.0.2] - 2024-4-02
+## [1.0.3] - 2024-4-08
+
+### Changed
+ - Re-added support for PUppet 5.5
+
+## [1.0.2] - 2024-4-03
 
 ### Changed
  - Removed additional validate_string functions that were found
